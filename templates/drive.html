@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Realtimer</title>
+		<style>
+			*{
+				margin:0;
+				padding:0;
+			}
+			#cube {
+				margin:auto;
+				width: 30px;
+				height: 50px;
+				background: red;
+				position: absolute;
+				//http://jsfiddle.net/gFcuU/
+				//http://stackoverflow.com/questions/19735250/running-a-python-script-from-php
+			}		
+		</style>
+    </head>
+
+    <body>
+		
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+        <script type="text/javascript">
+			var socket;
+			var keys;
+			var light = false;
+			
+			$(document).ready(function() {				
+				namespace = '/car';
+				socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+				lights(true);
+				keys = {};
+
+				$(document).keydown(function (e) {
+					keys[e.which] = true;
+					driveCar();
+				});
+
+				$(document).keyup(function (e) {
+					if(e.which==38 || e.which==40){socket.emit('command', {cmd: 83});}
+					delete keys[e.which];
+					driveCar();
+				});
+			});
+		
+		
+			function driveCar() {
+				for (var i in keys) {				
+					if(keys[38] ){
+						if(keys[39]) socket.emit('command', {cmd: 39});
+						else if(keys[37]) socket.emit('command', {cmd: 37});
+						else socket.emit('command', {cmd: 38});
+					}else if(keys[83]) socket.emit('command', {cmd: 83});						
+					else if(keys[40]){
+						if(keys[39]) socket.emit('command', {cmd: 39});
+						else if(keys[37]) socket.emit('command', {cmd: 37});
+						else socket.emit('command', {cmd: 40});						
+					}else if(keys[76]) lights(light);
+				}
+			}
+	
+	
+			function lights(sts) {
+				if(sts){
+					socket.emit('command', {cmd: 0});
+					light = false;
+				}else{
+					socket.emit('command', {cmd: 1});
+					light = true;
+				}
+			}
+        </script>
+		<div id="out"></div>
+    </body>
+</html>
