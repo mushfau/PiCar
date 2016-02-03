@@ -16,7 +16,6 @@ GPIO.setup(Motor1E,GPIO.OUT)
 GPIO.setup(Motor2A,GPIO.OUT)
 GPIO.setup(Motor2B,GPIO.OUT)
 GPIO.setup(Motor2E,GPIO.OUT)
-
 import time
 
 from gevent import monkey
